@@ -10,6 +10,14 @@
         for 10 minutes.
       </p>
 
+      {% if dev_code %}
+      <div class="alert alert-dev" role="status">
+        <strong>⚙ DEV MODE — email is off.</strong><br />
+        No mail was sent. Your code for <b>{{ email }}</b> is
+        <span class="dev-code">{{ dev_code }}</span>.
+      </div>
+      {% endif %}
+
       <form method="post" action="{{ url_for('verify') }}">
         <label for="code">Verification code</label>
         <input

@@ -571,7 +571,11 @@ def verify():
         g.user = None
         return redirect(url_for("dashboard"))
 
-    return render_template("verify.html", email=email)
+    return render_template(
+        "verify.html",
+        email=email,
+        dev_code=row["code"] if row and not EMAIL_PASSWORD else None,
+    )
 
 
 @app.route("/logout")
