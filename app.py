@@ -479,9 +479,15 @@ def signup():
         conn.commit()
         conn.close()
 
-        issue_otp(email)
-        session["pending_email"] = email
-        return redirect(url_for("verify"))
+        user_row = conn.execute(
+            "SELECT id FROM users WHERE email = ?", (email,)
+        ).fetchone()
+        conn.execute(
+            "UPDATE users SET is_verified = 1 WHERE email = ?", (email,)
+        )
+        conn.commit()
+        session["user_id"] = user_row["id"]
+        return redirect(url_for("dashboard"))
 
     return render_template("signup.html", cities=NEPAL_CITIES)
 
@@ -506,9 +512,15 @@ def login():
             flash("Wrong password. Try again.")
             return redirect(url_for("login"))
 
-        issue_otp(email)
-        session["pending_email"] = email
-        return redirect(url_for("verify"))
+        user_row = conn.execute(
+            "SELECT id FROM users WHERE email = ?", (email,)
+        ).fetchone()
+        conn.execute(
+            "UPDATE users SET is_verified = 1 WHERE email = ?", (email,)
+        )
+        conn.commit()
+        session["user_id"] = user_row["id"]
+        return redirect(url_for("dashboard"))
 
     return render_template("login.html")
 
