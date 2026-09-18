@@ -868,6 +868,7 @@ input:focus, select:focus {
    ============================================= */
 
 @media (max-width: 720px) {
+  .nav { position: static; }
   .nav-inner { flex-direction: column; gap: var(--space-3); }
   .two-col { grid-template-columns: 1fr; }
   .hero { padding: 70px 0 60px; }
