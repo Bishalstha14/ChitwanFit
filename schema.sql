@@ -50,3 +50,15 @@ CREATE TABLE IF NOT EXISTS live_sessions (
     FOREIGN KEY (user_id) REFERENCES users (id),
     UNIQUE (user_id)
 );
+-- Admin-panel interactions log (spec: SPECS/2026-09-18-admin-panel/plan.md).
+-- One row per meaningful user action; `kind` is swim/bike/page view/etc.
+CREATE TABLE IF NOT EXISTS interactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    kind TEXT NOT NULL,
+    detail TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+CREATE INDEX IF NOT EXISTS idx_interactions_user_time
+    ON interactions (user_id, created_at DESC);
