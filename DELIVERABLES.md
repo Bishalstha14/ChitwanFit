@@ -12,4 +12,4 @@ with progress bars, calorie estimates, a Nepal leaderboard, and a live training 
 https://github.com/Bishalstha14/ChitwanFit
 
 ## 4. Public Deployed URL
-https://nativerachel-platosalary-3000.codio.io/
+https://chitwanfit.onrender.com
