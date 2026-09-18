@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Live Now — ChitwanFit{% endblock %}
+
+{% block head %}
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="page-title">Live Now <span class="live-dot" title="Live"></span></h1>
+      <p class="muted">
+        See every athlete training around Nepal right now — and share your own spot, Strava-style.
+      </p>
+
+      {% if user %}
+        <button id="share-btn" class="btn btn-primary btn-lg">Start sharing my location</button>
+        <span id="share-status" class="muted"></span>
+      {% endif %}
+
+      <div class="card map-card share-note">
+        <div id="livenowmap"></div>
+      </div>
+
+      <p class="muted small-note">
+        Sharing needs Location access in your browser (this page must stay open), and works on the
+        <strong>https://</strong> address. Anyone logged in can see you as a pulsing marker.
+      </p>
+    </div>
+  </section>
+{% endblock %}
+
+{% block tail %}
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  <script>
+    const center = {{ center | tojson }};
+    const zoom = {{ zoom | tojson }};
+    const userId = {{ user.id | tojson }};
+
+    const map = L.map("livenowmap").setView(center, zoom);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    let markers = {};   // name -> marker
+    let watchId = null;
+
+    // Pulsing dot icon: a soft circle that "breathes".
+    const pulsingIcon = L.divIcon({
+      className: "live-pulse-wrap",
+      html: '<span class="live-pulse"></span>',
+      iconSize: [22, 22],
+      iconAnchor: [11, 11]
+    });
+
+    function fetchLive() {
+      fetch("/api/live/data")
+        .then((r) => r.json())
+        .then((athletes) => {
+          const seen = new Set();
+          athletes.forEach((a) => {
+            const key = a.name;
+            seen.add(key);
+            if (markers[key]) {
+              markers[key].setLatLng([a.lat, a.lng]);
+            } else {
+              const m = L.marker([a.lat, a.lng], { icon: pulsingIcon })
+                .addTo(map)
+                .bindPopup(
+                  `<strong>${a.name}</strong><br/>` +
+                  `${a.city} · ${a.path === "runner" ? "Runner" : "Ironman"}`
+                );
+              markers[key] = m;
+            }
+          });
+          // Remove athletes who stopped sharing.
+          Object.keys(markers).forEach((key) => {
+            if (!seen.has(key)) {
+              map.removeLayer(markers[key]);
+              delete markers[key];
+            }
+          });
+
+          // Recenter once so the whole live group is visible.
+          const liveLatLngs = athletes.map((a) => [a.lat, a.lng]);
+          if (liveLatLngs.length > 0) {
+            map.fitBounds(liveLatLngs, { padding: [40, 40] });
+          }
+        })
+        .catch(() => {});
+    }
+
+    function sendPosition(position) {
+      const body = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+      fetch("/api/live/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }).catch(() => {});
+    }
+
+    function stopSharing() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
+      fetch("/api/live/stop", { method: "POST" }).catch(() => {});
+      document.getElementById("share-btn").textContent = "Restart sharing my location";
+      document.getElementById("share-status").textContent = "You stopped sharing.";
+    }
+
+    document.getElementById("share-btn").addEventListener("click", () => {
+      if (watchId !== null) {
+        if (confirm("Stop showing your live location on the map?")) {
+          stopSharing();
+        }
+        return;
+      }
+
+      fetch("/api/live/start", { method: "POST" }).then(() => {
+        if (!("geolocation" in navigator)) {
+          document.getElementById("share-status").textContent =
+            "Your browser does not support location sharing.";
+          return;
+        }
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            sendPosition(position);
+            document.getElementById("share-status").textContent =
+              "You are live — keep this tab open.";
+            document.getElementById("share-btn").textContent = "Stop sharing my location";
+          },
+          (error) => {
+            document.getElementById("share-status").textContent =
+              "Location unavailable: " + error.message;
+            fetch("/api/live/stop", { method: "POST" });
+          },
+          { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 }
+        );
+      });
+    });
+
+    // Refresh everyone's position every 3 seconds.
+    setInterval(fetchLive, 3000);
+    fetchLive();
+  </script>
+{% endblock %}

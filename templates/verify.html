@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Verify your email — ChitwanFit{% endblock %}
+
+{% block content %}
+  <section class="auth">
+    <div class="container auth-card">
+      <h1>Check your inbox</h1>
+      <p class="muted">
+        We sent a 6-digit code to <strong>{{ email }}</strong>. It stays valid
+        for 10 minutes.
+      </p>
+
+      <form method="post" action="{{ url_for('verify') }}">
+        <label for="code">Verification code</label>
+        <input
+          type="text"
+          id="code"
+          name="code"
+          required
+          maxlength="6"
+          inputmode="numeric"
+          pattern="[0-9]{6}"
+          placeholder="123456" />
+
+        <button type="submit" class="btn btn-primary btn-block">Verify & continue</button>
+      </form>
+
+      <p class="muted center">No code? <a href="{{ url_for('login') }}">Log in again</a> to request a new one.</p>
+    </div>
+  </section>
+{% endblock %}

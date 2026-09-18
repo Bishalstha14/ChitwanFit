@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Leaderboard — ChitwanFit{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="page-title">Nepal Leaderboard</h1>
+      <p class="muted">Ranked by total distance logged. Friendly competition, no prizes — just pride.</p>
+
+      {% if board %}
+        <div class="card">
+          <table class="leaderboard">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Athlete</th>
+                <th>City</th>
+                <th>Path</th>
+                <th>Total km</th>
+                <th>Total time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for entry in board %}
+                <tr>
+                  <td>{{ loop.index }}</td>
+                  <td>{{ entry['name'] }}</td>
+                  <td>{{ entry['city'] }}</td>
+                  <td>{{ entry['path'] }}</td>
+                  <td>{{ entry['total_km'] }} km</td>
+                  <td>{{ entry['hours'] }}h {{ entry['minutes'] }}m</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="card">
+          <p class="muted">No workouts logged yet. Be the first name on the board!</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

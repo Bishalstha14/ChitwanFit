@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — ChitwanFit{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="page-title">Welcome back, {{ g.user['name'] }}!</h1>
+      <p class="muted">
+        {% if path == 'runner' %}
+          You're training as a <strong>Runner</strong> from {{ g.user['city'] }}, Nepal.
+        {% else %}
+          You're training as an <strong>Ironman</strong> from {{ g.user['city'] }}, Nepal.
+        {% endif %}
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      {% if stage %}
+        <h2 class="section-title">Stage {{ stage_number }} of {{ stages|length }} unlocked: {{ stage['name'] }}</h2>
+        <p class="section-sub">Diet tip: {{ stage['tip'] }}</p>
+      {% else %}
+        <h2 class="section-title">Working toward Stage 1 — {{ stages[0]['name'] }}</h2>
+        <p class="section-sub">Keep logging workouts. Your totals below count toward every stage.</p>
+      {% endif %}
+
+      <div class="progress-track">
+        {% for s in stages %}
+          {% set reached = loop.index <= stage_number %}
+          <div class="progress-step {{ 'done' if reached else '' }}">
+            <span class="progress-dot"></span>
+            <span class="progress-label">{{ s['name'] }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">Your totals</h2>
+      <div class="stats-grid">
+        {% if path == 'runner' %}
+          <div class="stat-card">
+            <h3>{{ totals['run'] }} km</h3>
+            <p>Run</p>
+          </div>
+          <div class="stat-card stat-total">
+            <h3>{{ calories['run'] }} kcal</h3>
+            <p>Approx. calories burned</p>
+          </div>
+        {% else %}
+          <div class="stat-card">
+            <h3>{{ totals['swim'] }} km</h3>
+            <p>Swim</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ totals['bike'] }} km</h3>
+            <p>Bike</p>
+          </div>
+          <div class="stat-card">
+            <h3>{{ totals['run'] }} km</h3>
+            <p>Run</p>
+          </div>
+          <div class="stat-card stat-total">
+            <h3>{{ calories['swim'] + calories['bike'] + calories['run'] }} kcal</h3>
+            <p>Approx. calories burned</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="card">
+        <h2 class="section-title">Log a workout</h2>
+        <form method="post" action="{{ url_for('log_workout') }}">
+          {% if path != 'runner' %}
+            <label for="sport">Sport</label>
+            <select id="sport" name="sport" required>
+              <option value="swim">Swim</option>
+              <option value="bike">Bike</option>
+              <option value="run">Run</option>
+            </select>
+          {% endif %}
+
+          <label for="distance_km">Distance (km)</label>
+          <input type="number" id="distance_km" name="distance_km" min="0.1" step="0.1" required placeholder="e.g. 5.0" />
+
+          <label for="minutes">Time (minutes)</label>
+          <input type="number" id="minutes" name="minutes" min="1" required placeholder="e.g. 35" />
+
+          <label for="city">Where did you train? (Nepal)</label>
+          <select id="city" name="city" required>
+            {% for city in cities %}
+              <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+          </select>
+
+          <label for="logged_on">Date (optional)</label>
+          <input type="date" id="logged_on" name="logged_on" />
+
+          <button type="submit" class="btn btn-primary btn-block">Log workout</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Recent workouts</h2>
+        {% if workouts %}
+          <ul class="workout-list">
+            {% for w in workouts %}
+              <li>
+                <span class="sport-badge sport-{{ w['sport'] }}">{{ w['sport'] }}</span>
+                <strong>{{ w['distance_km'] }} km</strong> in {{ w['minutes'] }} min
+                <span class="muted">· {{ w['city'] }} · {{ w['logged_on'] }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">No workouts yet. Log your first one to start climbing!</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

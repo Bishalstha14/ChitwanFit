@@ -1,0 +1,17 @@
+# Secrets — never commit
+secret_key.txt
+.env
+*.env
+
+# Local database / runtime data
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Runtime logs
+*.log
+/tmp/*

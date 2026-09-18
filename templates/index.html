@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}ChitwanFit — Break your own limits, from Nepal{% endblock %}
+
+{% block content %}
+
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Made in Nepal · Built for every athlete</p>
+      <h1 class="hero-title">Two paths. One finish line: a stronger you.</h1>
+      <p class="hero-sub">
+        Train like an <strong>Ironman</strong> (swim · bike · run) or as a pure
+        <strong>Runner</strong> — climb real stages, watch every workout appear
+        on your Nepal map, and join runners around the country.
+      </p>
+      <div class="hero-actions">
+        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Start your journey</a>
+        <a href="{{ url_for('leaderboard') }}" class="btn btn-ghost btn-lg">See the leaderboard</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">The Ironman path — 4 stages</h2>
+      <p class="section-sub">Swim + bike + run. Complete each sport's distance to unlock the next stage.</p>
+      <div class="stage-cards reveal">
+        <div class="stage-card">
+          <span class="stage-number">1</span>
+          <h3>Sprint</h3>
+          <p>0.75 km swim · 20 km bike · 5 km run</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">2</span>
+          <h3>Olympic</h3>
+          <p>1.5 km swim · 40 km bike · 10 km run</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">3</span>
+          <h3>Half Ironman 70.3</h3>
+          <p>1.9 km swim · 90 km bike · 21.1 km run</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">4</span>
+          <h3>Full Ironman</h3>
+          <p>3.8 km swim · 180 km bike · 42.2 km run</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">The Runner path — 5 stages</h2>
+      <p class="section-sub">Official running distances: 5K → 10K → Half → Marathon → 100K.</p>
+      <div class="stage-cards reveal">
+        <div class="stage-card">
+          <span class="stage-number">1</span>
+          <h3>5K</h3>
+          <p>5 km — the perfect starting line</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">2</span>
+          <h3>10K</h3>
+          <p>10 km — build your base</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">3</span>
+          <h3>Half Marathon</h3>
+          <p>21.1 km (13.1 miles)</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">4</span>
+          <h3>Marathon</h3>
+          <p>42.2 km (26.2 miles)</p>
+        </div>
+        <div class="stage-card">
+          <span class="stage-number">5</span>
+          <h3>Ultramarathon</h3>
+          <p>100 km — the mountaineer's test</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Everything you need, nothing you don't</h2>
+      <div class="feature-grid reveal">
+        <div class="feature">
+          <h3>Track time & distance</h3>
+          <p>Log every swim, ride, and run in seconds. See your pace and totals.</p>
+        </div>
+        <div class="feature">
+          <h3>Your Nepal map</h3>
+          <p>Every workout is a dot on the map, marked at the city where you trained.</p>
+        </div>
+        <div class="feature">
+          <h3>Live Now</h3>
+          <p>Share your location while you train and watch other athletes live on the Nepal map — Strava style.</p>
+        </div>
+        <div class="feature">
+          <h3>Climb with others</h3>
+          <p>Leaderboards of athletes across Nepal. Friendly competition between cities.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container cta-strip reveal">
+      <h2>Your story starts with one workout — where will it take you?</h2>
+      <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Start your first workout</a>
+    </div>
+  </section>
+
+{% endblock %}

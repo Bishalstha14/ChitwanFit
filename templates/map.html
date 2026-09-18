@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Your Nepal Map — ChitwanFit{% endblock %}
+
+{% block head %}
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <h1 class="page-title">Your activity map of Nepal</h1>
+      <p class="muted">Every dot is a workout you've logged, marked at the city where you trained.</p>
+
+      {% if with_workouts %}
+        <div class="card map-card">
+          <div id="nepalmap"></div>
+        </div>
+      {% else %}
+        <div class="card">
+          <p class="muted">No workouts yet — log one and it will appear here on the map!</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block tail %}
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  <script>
+    const markers = {{ markers | tojson }};
+    const center = {{ center | tojson }};
+    const zoom = {{ zoom | tojson }};
+
+    const map = L.map("nepalmap").setView(center, zoom);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+
+    markers.forEach((m) => {
+      const emoji = m.sport === "run" ? "🏃" : m.sport === "bike" ? "🚴" : "🏊";
+      const time = m.hours > 0 ? `${m.hours}h ${m.minutes}m` : `${m.minutes} min`;
+      L.marker([m.lat, m.lng])
+        .addTo(map)
+        .bindPopup(
+          `<strong>${emoji} ${m.sport}</strong><br/>` +
+          `${m.distance_km} km in ${time}<br/>` +
+          `${m.city} · ${m.day}`
+        );
+    });
+  </script>
+{% endblock %}

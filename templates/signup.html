@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Sign up — ChitwanFit{% endblock %}
+
+{% block content %}
+  <section class="auth">
+    <div class="container auth-card">
+      <h1>Create your account</h1>
+      <p class="muted">Made for Nepal. We'll email you a one-time code to verify.</p>
+
+      <form method="post" action="{{ url_for('signup') }}">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required placeholder="Alex Runner" />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required placeholder="you@example.com" />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="6" placeholder="At least 6 characters" />
+
+        <label for="path">Which path are you training for?</label>
+        <select id="path" name="path" required>
+          <option value="ironman">Ironman — swim + bike + run (4 stages)</option>
+          <option value="runner">Runner — run only (5 stages)</option>
+        </select>
+
+        <label for="city">Where in Nepal do you train?</label>
+        <select id="city" name="city" required>
+          {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+      </form>
+
+      <p class="muted center">Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+    </div>
+  </section>
+{% endblock %}
