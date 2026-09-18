@@ -65,3 +65,18 @@ on the Codio public URL.
 **Bishal Shrestha** · Bharatpur-11, Bhojad, Chitwan
 
 Swim. Bike. Run. Climb every stage. Stay live.
+
+
+## Deploy to Render (the public URL that actually runs Flask)
+
+GitHub Pages **cannot** run Python, so use Render for the live site.
+
+1. Go to https://render.com and sign up (free, no credit card).
+2. New -> Web Service -> connect GitHub -> pick the **ChitwanFit** repo.
+3. Branch: use the one with the real Flask app (e.g. `feat/admin-panel`).
+4. Render auto-reads `render.yaml` (Flask 3 + gunicorn). Click **Deploy**.
+5. In ~2 minutes you get a permanent URL like `https://chitwanfit.onrender.com`.
+
+Notes:
+- First load after idle takes ~30s (free tier sleeps).
+- SQLite data resets on redeploy (fine for a demo).
